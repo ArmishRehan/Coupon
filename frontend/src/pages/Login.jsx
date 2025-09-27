@@ -6,12 +6,11 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+   setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login submit body:", form);
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
@@ -21,13 +20,17 @@ export default function Login() {
       });
 
       const data = await res.json();
-      console.log("Login response:", res.status, data);
 
       if (res.ok) {
         // Save both token and user
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/dashboard");
+
+        if (data.user.role === "admin") {
+          navigate("/Admin-Dashboard");
+        } else {
+          navigate("/User-Dashboard");
+        }
       } else {
         alert(data.msg || "Login failed");
       }
@@ -37,64 +40,61 @@ export default function Login() {
     }
   };
 
-return (
-  <div className="flex items-center justify-center min-h-screen bg-gradient">
-    <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-lg">
-      <h2 className="text-3xl font-bold text-center text-[#A594F9]">
-        Welcome Back!
-      </h2>
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gradient">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-lg">
+        <h2 className="text-3xl font-bold text-center text-[#A594F9]">
+          Welcome Back!
+        </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 rounded-xl border border-gray-200 shadow-sm 
-                       focus:ring-[#A594F9] focus:border-[#A594F9] bg-white text-gray-900 placeholder-gray-400 transition"
-            placeholder="Enter your email"
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              className="mt-1 block w-full px-4 py-2 rounded-xl border border-gray-200 shadow-sm 
+                         focus:ring-[#A594F9] focus:border-[#A594F9] bg-white text-gray-900 placeholder-gray-400 transition"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 rounded-xl border border-gray-200 shadow-sm 
-                       focus:ring-[#A594F9] focus:border-[#A594F9] bg-white text-gray-900 placeholder-gray-400 transition"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              className="mt-1 block w-full px-4 py-2 rounded-xl border border-gray-200 shadow-sm 
+                         focus:ring-[#A594F9] focus:border-[#A594F9] bg-white text-gray-900 placeholder-gray-400 transition"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="btn-purple"
-        >
-          Login
-        </button>
-      </form>
+          <button type="submit" className="btn-purple">
+            Login
+          </button>
+        </form>
 
-      <p className="mt-4 text-sm text-center text-gray-600">
-        Don’t have an account?{" "}
-        <span
-          className="font-medium text-[#A594F9] hover:text-[#CDC1FF] cursor-pointer transition-colors"
-          onClick={() => navigate("/signup")}
-        >
-          Sign up
-        </span>
-      </p>
+        <p className="mt-4 text-sm text-center text-gray-600">
+          Don’t have an account?{" "}
+          <span
+            className="font-medium text-[#A594F9] hover:text-[#CDC1FF] cursor-pointer transition-colors"
+            onClick={() => navigate("/signup")}
+          >
+            Sign up
+          </span>
+        </p>
+      </div>
     </div>
-  </div>
-);
+  );
 }

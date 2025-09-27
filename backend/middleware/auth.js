@@ -10,8 +10,7 @@ module.exports = function (req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // full user objects are beign saved here for routes
-    req.user = { id: decoded.id, username: decoded.username, email: decoded.email };
+    req.user = decoded;
     next();
   } catch (err) {
     return res.status(401).json({ msg: "Invalid or expired token" });

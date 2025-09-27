@@ -61,6 +61,7 @@ export default function CreateCoupon() {
             if (res.ok) {
                 setQrCodeUrl(data.qrCode); // store QR code URL
                 alert("Coupon created successfully!");
+                navigate("/User-dashboard")
             } else {
                 alert("Failed to create coupon: " + data.error);
             }
@@ -195,7 +196,7 @@ return (
             <button
               type="submit"
               className="btn-purple w-full"
-              onClick={() => navigate("/coupons")}
+              
             >
               Create Coupon
             </button>

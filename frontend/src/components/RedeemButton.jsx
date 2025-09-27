@@ -10,43 +10,59 @@ export default function RedeemButton({ couponId, currentStatus, onRedeem }) {
     );
   }
 
-  return (
-    <button
-      disabled={loading}
-      className="btn-purple mt-4 w-full disabled:opacity-50"
-      onClick={async () => {
-        setLoading(true);
-        const token = localStorage.getItem("token");
+return (
+  <button
+    disabled={loading}
+    className="
+      mt-4 w-full 
+      px-6 py-2 
+      rounded-lg 
+      text-sm font-semibold tracking-wider
+      bg-[#A1C2BD]                   // Accent color background
+      text-[#19183B]                 // Primary dark text
+      border border-transparent 
+      transition-all duration-300 
+      shadow-sm
+      hover:bg-[#708993]             // Muted secondary on hover
+      hover:text-white
+      disabled:opacity-50 
+      disabled:cursor-not-allowed
+    "
+    onClick={async () => {
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-        try {
-          const res = await fetch(
-            `http://localhost:5000/api/coupons/${couponId}/redeem`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          const data = await res.json();
-
-          if (res.ok) {
-            onRedeem(); 
-          } else {
-            alert(data.msg || "Error redeeming coupon");
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/coupons/${couponId}/redeem`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
           }
-        } catch (err) {
-          console.error("Error redeeming coupon:", err);
-          alert("Something went wrong");
-        } finally {
-          setLoading(false);
+        );
+
+        const data = await res.json();
+
+        if (res.ok) {
+          // Success callback (updates local state/UI)
+          onRedeem(); 
+        } else {
+          // Display the server message or a default error
+          alert(data.msg || "Error redeeming coupon");
         }
-      }} 
-      
-    >
-      {loading ? "Redeeming..." : "Redeem Coupon"}
-    </button>
-  );
+      } catch (err) {
+        console.error("Error redeeming coupon:", err);
+        alert("Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    }} 
+    
+  >
+    {loading ? "Redeeming..." : "Redeem Coupon"}
+  </button>
+);
 }
