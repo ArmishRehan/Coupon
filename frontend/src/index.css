@@ -3,15 +3,3 @@
 @tailwind components;
 @tailwind utilities;
 
-@utility btn-purple{
-  @apply w-full py-2 rounded-xl bg-[#A594F9] text-white font-medium 
-        hover:bg-[#CDC1FF] hover:text-gray-800 shadow-md transition }
-
-   @utility bg-gradient{
-    @apply bg-gradient-to-tr from-[#CDC1FF] to-white
-   }
-
-   @utility input-style{
-    @apply w-full px-3 py-2 rounded-lg border border-gray-300 bg-white shadow-sm focus:ring-2 focus:ring-[#A594F9]
-     focus:border-[#A594F9]  transition duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed
-   }

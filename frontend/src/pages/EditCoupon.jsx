@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 export default function EditCoupon() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [coupon, setCoupon] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [newStatus, setNewStatus] = useState(null); // temporary status until save
+  const [newStatus, setNewStatus] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,105 +26,136 @@ export default function EditCoupon() {
       });
   }, [id]);
 
-  const handleSave = async () => {
-    const token = localStorage.getItem("token");
+const handleSave = async () => {
+  const token = localStorage.getItem("token");
 
-    // Merge newStatus if set, otherwise keep original
-    const updatedCoupon = {
-      ...coupon,
-      status: newStatus || coupon.status,
-    };
-
-    console.log("Sending coupon data:", updatedCoupon);
-
-    try {
-      const res = await fetch(`http://localhost:5000/api/coupons/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedCoupon),
-      });
-
-      const data = await res.json();
-      console.log("Update response:", data);
-
-      if (!res.ok) throw new Error(data.msg || "Failed to update coupon");
-
-      alert("Coupon updated successfully!");
-      navigate("/Admin-Coupons");
-    } catch (err) {
-      console.error("Update error:", err);
-      alert("Error updating coupon");
-    }
+  const updatedCoupon = {
+    name: coupon.name,
+    discount: Number(coupon.discount),
+    valid_from: coupon.valid_from,
+    valid_to: coupon.valid_to,
+    status: newStatus || coupon.status,
   };
+
+  try {
+    const res = await fetch(`http://localhost:5000/api/coupons/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedCoupon),
+    });
+
+    const data = await res.json();
+    console.log("Update response:", data);
+
+    if (!res.ok) throw new Error(data.msg || "Failed to update coupon");
+
+    alert("Coupon updated successfully!");
+    navigate("/Admin-dashboard");
+  } catch (err) {
+    console.error("Update error:", err);
+    alert("Error updating coupon");
+  }
+};
+
 
   if (loading) return <p className="text-center mt-6">Loading coupon...</p>;
   if (!coupon) return <p className="text-center mt-6">Coupon not found</p>;
 
-  // Decide what status to show in UI
   const displayStatus = newStatus || coupon.status;
 
-  return (
-    <div className="max-w-lg mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
-      <h2 className="text-xl font-bold mb-4">Edit Coupon</h2>
+return (
+  <div className="min-h-screen bg-[#E7F2EF] flex flex-col">
+    <Navbar />
 
-      <label className="block mb-2 font-medium">Name</label>
-      <input
-        type="text"
-        value={coupon.name}
-        onChange={(e) => setCoupon({ ...coupon, name: e.target.value })}
-        className="w-full p-2 border rounded mb-4"
-      />
+    <div className="flex-grow flex items-center justify-center px-4 py-8"> 
 
-      <label className="block mb-2 font-medium">Discount %</label>
-      <input
-        type="number"
-        value={coupon.discount}
-        onChange={(e) => setCoupon({ ...coupon, discount: e.target.value })}
-        className="w-full p-2 border rounded mb-4"
-      />
+      <div className="w-full max-w-4xl p-8 bg-white shadow-xl rounded-2xl border-t-4 border-[#A1C2BD]">
 
-      <label className="block mb-2 font-medium">Valid From</label>
-      <input
-        type="date"
-        value={coupon.valid_from?.split("T")[0] || ""}
-        onChange={(e) => setCoupon({ ...coupon, valid_from: e.target.value })}
-        className="w-full p-2 border rounded mb-4"
-      />
+        <h2 className="text-2xl font-bold mb-6 text-[#19183B] text-center">
+          Edit Coupon
+        </h2>
 
-      <label className="block mb-2 font-medium">Valid To</label>
-      <input
-        type="date"
-        value={coupon.valid_to?.split("T")[0] || ""}
-        onChange={(e) => setCoupon({ ...coupon, valid_to: e.target.value })}
-        className="w-full p-2 border rounded mb-4"
-      />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6"> 
 
-      {/* Show enable/disable toggle only if coupon is not expired */}
-      {coupon.status !== "expired" && (
-        <button
-          onClick={() =>
-            setNewStatus(displayStatus === "pending" ? "disabled" : "pending")
-          }
-          className={`mb-4 px-4 py-2 rounded text-white ${
-            displayStatus === "pending"
-              ? "bg-red-600 hover:bg-red-700"
-              : "bg-green-600 hover:bg-green-700"
-          }`}
-        >
-          {displayStatus === "pending" ? "Disable Coupon" : "Enable Coupon"}
-        </button>
-      )}
+          <div>
+            <label className="block text-sm font-medium text-[#708993] mb-1">Name</label>
+            <input
+              type="text"
+              value={coupon.name}
+              onChange={(e) => setCoupon({ ...coupon, name: e.target.value })}
+              className="mt-1 block w-full p-2.5 border border-[#708993]/50 rounded-xl shadow-sm
+                        text-[#19183B] focus:border-[#A1C2BD] focus:ring focus:ring-[#A1C2BD]/50 transition"
+            />
+          </div>
 
-      {/* Save button should ALWAYS be visible */}
-      <button
-        onClick={handleSave}
-        className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Save Changes
-      </button>
+          <div>
+            <label className="block text-sm font-medium text-[#708993] mb-1">Discount %</label>
+            <input
+              type="number"
+              value={coupon.discount}
+              onChange={(e) => setCoupon({ ...coupon, discount: e.target.value })}
+              className="mt-1 block w-full p-2.5 border border-[#708993]/50 rounded-xl shadow-sm
+                        text-[#19183B] focus:border-[#A1C2BD] focus:ring focus:ring-[#A1C2BD]/50 transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[#708993] mb-1">Valid From</label>
+            <input
+              type="date"
+              value={coupon.valid_from?.split("T")[0] || ""}
+              onChange={(e) => setCoupon({ ...coupon, valid_from: e.target.value })}
+              className="mt-1 block w-full p-2.5 border border-[#708993]/50 rounded-xl shadow-sm
+                        text-[#19183B] focus:border-[#A1C2BD] focus:ring focus:ring-[#A1C2BD]/50 transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[#708993] mb-1">Valid To</label>
+            <input
+              type="date"
+              value={coupon.valid_to?.split("T")[0] || ""}
+              onChange={(e) => setCoupon({ ...coupon, valid_to: e.target.value })}
+              className="mt-1 block w-full p-2.5 border border-[#708993]/50 rounded-xl shadow-sm
+                        text-[#19183B] focus:border-[#A1C2BD] focus:ring focus:ring-[#A1C2BD]/50 transition"
+            />
+          </div>
+
+          <div className="lg:col-span-2">
+            {coupon.status !== "expired" && (
+              <button
+                onClick={() =>
+                  setNewStatus(displayStatus === "pending" ? "disabled" : "pending")
+                }
+                className={`px-4 py-2 font-medium rounded-lg text-[#19183B] transition-colors ${
+                  displayStatus === "pending"
+                    ? "bg-[#19183B]/20 hover:bg-[#19183B]/30"
+                    : "bg-[#A1C2BD] hover:bg-[#708993]"
+                }`}
+              >
+                {displayStatus === "pending" ? "Disable Coupon" : "Enable Coupon"}
+              </button>
+            )}
+          </div>
+
+          <div className="lg:col-span-2">
+            <button
+              onClick={handleSave}
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl 
+                         shadow-md text-lg font-semibold text-[#19183B] bg-[#A1C2BD] 
+                         hover:bg-[#708993] hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 
+                         focus:ring-[#A1C2BD] transition duration-150 ease-in-out"
+            >
+              Save Changes
+            </button>
+          </div>
+
+        </div>
+      </div>
     </div>
-  );
+  </div>
+);
 }

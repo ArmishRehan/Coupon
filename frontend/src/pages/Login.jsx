@@ -40,61 +40,70 @@ export default function Login() {
     }
   };
 
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-[#A594F9]">
-          Welcome Back!
-        </h2>
+return (
+  <div className="flex items-center justify-center min-h-screen bg-[#E7F2EF]">
+    <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl border border-[#708993]/30">
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 rounded-xl border border-gray-200 shadow-sm 
-                         focus:ring-[#A594F9] focus:border-[#A594F9] bg-white text-gray-900 placeholder-gray-400 transition"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
+      <h2 className="text-3xl font-bold text-center text-[#19183B]">
+        Welcome Back!
+      </h2>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              className="mt-1 block w-full px-4 py-2 rounded-xl border border-gray-200 shadow-sm 
-                         focus:ring-[#A594F9] focus:border-[#A594F9] bg-white text-gray-900 placeholder-gray-400 transition"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
 
-          <button type="submit" className="btn-purple">
-            Login
-          </button>
-        </form>
+          <label className="block text-sm font-medium text-[#708993]">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
+                        focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] placeholder-[#708993] transition"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
 
-        <p className="mt-4 text-sm text-center text-gray-600">
-          Don’t have an account?{" "}
-          <span
-            className="font-medium text-[#A594F9] hover:text-[#CDC1FF] cursor-pointer transition-colors"
-            onClick={() => navigate("/signup")}
-          >
-            Sign up
-          </span>
-        </p>
-      </div>
+        <div>
+          <label className="block text-sm font-medium text-[#708993]">
+            Password
+          </label>
+          <input
+            type="password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
+            className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
+                        focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] placeholder-[#708993] transition"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl 
+                     shadow-md text-lg font-semibold text-[#19183B] bg-[#A1C2BD] 
+                     hover:bg-[#708993] hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 
+                     focus:ring-[#A1C2BD] transition duration-150 ease-in-out"
+        >
+          Login
+        </button>
+      </form>
+
+      <p className="mt-4 text-sm text-center text-[#708993]">
+        Don’t have an account?{" "}
+
+        <span
+          className="font-medium text-[#19183B] hover:text-[#A1C2BD] cursor-pointer transition-colors"
+          onClick={() => navigate("/signup")}
+        >
+          Sign up
+        </span>
+      </p>
     </div>
-  );
+  </div>
+);
 }

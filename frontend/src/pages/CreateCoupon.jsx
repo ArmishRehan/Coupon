@@ -71,12 +71,13 @@ export default function CreateCoupon() {
     };
 
 return (
-  <div className="min-h-screen bg-gradient flex flex-col">
+  <div className="min-h-screen bg-[#E7F2EF] flex flex-col">
     <Navbar />
+    <div className="flex-grow flex items-center justify-center px-4 py-8">
 
-    <div className="flex-grow flex items-center justify-center px-4">
-      <div className="w-full max-w-4xl p-8 bg-white shadow-lg rounded-2xl h-auto max-h-[85vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
+      <div className="w-full max-w-4xl p-8 bg-white shadow-xl rounded-2xl h-auto border border-[#708993]/30">
+
+        <h2 className="text-2xl font-bold mb-6 text-[#19183B] text-center">
           Create Coupon
         </h2>
 
@@ -84,16 +85,17 @@ return (
           onSubmit={handleSubmit}
           className="grid grid-cols-1 lg:grid-cols-2 gap-6"
         >
-          {/* Brand */}
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#708993] mb-1">
               Brand
             </label>
             <select
               name="brandId"
               value={form.brandId}
               onChange={handleChange}
-              className="input-style"
+              className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
+                        focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
               required
             >
               <option value="" disabled>
@@ -107,16 +109,16 @@ return (
             </select>
           </div>
 
-          {/* Branch */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#708993] mb-1">
               Branch
             </label>
             <select
               name="branchId"
               value={form.branchId}
               onChange={handleChange}
-              className="input-style disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
+                        focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
               required
               disabled={!form.brandId}
             >
@@ -131,9 +133,9 @@ return (
             </select>
           </div>
 
-          {/* Coupon Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+
+            <label className="block text-sm font-medium text-[#708993] mb-1">
               Coupon Name
             </label>
             <input
@@ -141,14 +143,14 @@ return (
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="input-style"
+              className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
+                        focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
               required
             />
           </div>
 
-          {/* Discount */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#708993] mb-1">
               Discount (%)
             </label>
             <input
@@ -156,14 +158,14 @@ return (
               name="discount"
               value={form.discount}
               onChange={handleChange}
-              className="input-style"
+              className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
+                        focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
               required
             />
           </div>
 
-          {/* Valid From */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#708993] mb-1">
               Valid From
             </label>
             <input
@@ -171,14 +173,14 @@ return (
               name="validFrom"
               value={form.validFrom}
               onChange={handleChange}
-              className="input-style"
+              className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
+                        focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
               required
             />
           </div>
 
-          {/* Valid To */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-[#708993] mb-1">
               Valid To
             </label>
             <input
@@ -186,31 +188,32 @@ return (
               name="validTo"
               value={form.validTo}
               onChange={handleChange}
-              className="input-style"
+              className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
+                        focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
               required
             />
           </div>
 
-          {/* Submit - full width */}
           <div className="lg:col-span-2">
             <button
               type="submit"
-              className="btn-purple w-full"
-              
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl 
+                         shadow-md text-lg font-semibold text-[#19183B] bg-[#A1C2BD] 
+                         hover:bg-[#708993] hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 
+                         focus:ring-[#A1C2BD] transition duration-150 ease-in-out"
             >
               Create Coupon
             </button>
           </div>
         </form>
 
-        {/* QR code preview */}
         {qrCodeUrl && (
-          <div className="mt-6 text-center">
-            <h3 className="text-lg font-medium mb-2">Scan this QR code:</h3>
+          <div className="mt-6 text-center pt-6 border-t border-[#708993]/30">
+            <h3 className="text-lg font-medium mb-3 text-[#19183B]">Scan this QR code:</h3>
             <img
               src={`http://localhost:5000${qrCodeUrl}`}
               alt="Coupon QR Code"
-              className="mx-auto rounded-lg shadow w-32 h-32"
+              className="mx-auto rounded-lg shadow-xl w-32 h-32 border-4 border-[#E7F2EF]"
             />
           </div>
         )}

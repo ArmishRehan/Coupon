@@ -7,14 +7,14 @@ const authenticate = require("../middleware/auth");
 
 const router = express.Router();
 
-// 📌 Helper to format date for MySQL
+//  Helper to format date for MySQL
 function formatDate(dateString) {
   if (!dateString) return null;
   const date = new Date(dateString);
   return date.toISOString().slice(0, 19).replace("T", " "); // "YYYY-MM-DD HH:MM:SS"
 }
 
-// 📌 Create a new coupon
+//  Create a new coupon
 router.post("/", authenticate, async (req, res) => {
   try {
     const { name, discount, brandId, branchId, validFrom, validTo } = req.body;
@@ -47,7 +47,7 @@ router.post("/", authenticate, async (req, res) => {
   }
 });
 
-// 📌 Get coupons for logged-in user
+// Get coupons for logged-in user
 router.get("/my", authenticate, async (req, res) => {
   try {
     const [coupons] = await db.query(
@@ -67,7 +67,7 @@ router.get("/my", authenticate, async (req, res) => {
   }
 });
 
-// 📌 Get all coupons (Admin only)
+//  Get all coupons (Admin only)
 router.get("/all", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -91,7 +91,7 @@ router.get("/all", authenticate, async (req, res) => {
   }
 });
 
-// 📌 Redeem coupon (user only)
+//  Redeem coupon (user only)
 router.put("/:id/redeem", authenticate, async (req, res) => {
   try {
     const [result] = await db.query(
@@ -112,8 +112,8 @@ router.put("/:id/redeem", authenticate, async (req, res) => {
   }
 });
 
-// 📌 Update coupon (Admin only, Save Changes button)
-// Update coupon (Admin only)
+// Update coupon (Admin only, Save Changes button)
+
 router.put("/:id", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -123,11 +123,11 @@ router.put("/:id", authenticate, async (req, res) => {
     const { id } = req.params;
     let { name, discount, valid_from, valid_to, status } = req.body;
 
-    // ✅ Format only if provided
+    // Format only if provided
     valid_from = valid_from ? formatDate(valid_from) : null;
     valid_to = valid_to ? formatDate(valid_to) : null;
 
-    // ✅ Get existing coupon first
+    // Get existing coupon first
     const [existing] = await db.query("SELECT * FROM coupons WHERE id = ?", [id]);
     if (existing.length === 0) {
       return res.status(404).json({ msg: "Coupon not found" });
@@ -135,14 +135,13 @@ router.put("/:id", authenticate, async (req, res) => {
 
     const current = existing[0];
 
-    // ✅ Use provided values OR fallback to current ones
+    //  Use provided values OR fallback to current ones
     const updatedName = name ?? current.name;
     const updatedDiscount = discount ?? current.discount;
     const updatedValidFrom = valid_from ?? current.valid_from;
     const updatedValidTo = valid_to ?? current.valid_to;
     const updatedStatus = status ?? current.status;
 
-    // ✅ Run update
     await db.query(
       `UPDATE coupons 
        SET name = ?, discount = ?, valid_from = ?, valid_to = ?, status = ? 
@@ -158,7 +157,7 @@ router.put("/:id", authenticate, async (req, res) => {
 });
 
 
-// 📌 Get single coupon (Admin only)
+//  Get single coupon (Admin only)
 router.get("/:id", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -190,7 +189,7 @@ router.get("/:id", authenticate, async (req, res) => {
   }
 });
 
-// 📌 Update only status (optional, not used in EditCoupon anymore)
+//  Update only status (optional, not used in EditCoupon anymore)
 router.patch("/:id/status", authenticate, async (req, res) => {
   try {
     const { status } = req.body;

@@ -13,24 +13,11 @@ export default function CouponFilter({ onFilterChange }) {
   return (
   <div className="flex flex-wrap gap-4 mb-8 p-4">
     
-    {/* Status Select */}
     <select
       value={status}
       onChange={(e) => setStatus(e.target.value)}
-      className="
-        border border-[#708993] 
-        text-[#19183B] 
-        px-3 py-2 
-        rounded-lg 
-        bg-[#E7F2EF] 
-        text-sm 
-        font-medium
-        focus:border-[#19183B] 
-        focus:ring-1 focus:ring-[#19183B] 
-        appearance-none 
-        transition-colors
-        cursor-pointer
-      "
+      className="border border-[#708993] text-[#19183B] px-3 py-2 rounded-lg bg-[#E7F2EF] text-sm font-medium
+        focus:border-[#19183B] focus:ring-1 focus:ring-[#19183B] appearance-none transition-colors cursor-pointer"
     >
       <option value="">All Status</option>
       <option value="pending">Pending</option>
@@ -38,46 +25,20 @@ export default function CouponFilter({ onFilterChange }) {
       <option value="expired">Expired</option>
       <option value="disabled">Disabled</option>
     </select>
-
-    {/* Date From Input */}
     <input
       type="date"
       value={dateFrom}
       onChange={(e) => setDateFrom(e.target.value)}
-      className="
-        border border-[#708993] 
-        text-[#19183B] 
-        px-3 py-2 
-        rounded-lg 
-        bg-[#E7F2EF] 
-        text-sm 
-        font-medium
-        focus:border-[#19183B] 
-        focus:ring-1 focus:ring-[#19183B] 
-        transition-colors
-        cursor-pointer
-      "
+      className="border border-[#708993] text-[#19183B] px-3 py-2 rounded-lg bg-[#E7F2EF] text-sm font-medium
+        focus:border-[#19183B] focus:ring-1 focus:ring-[#19183B] transition-colors cursor-pointer"
       aria-label="Filter from date"
     />
-
-    {/* Date To Input */}
     <input
       type="date"
       value={dateTo}
       onChange={(e) => setDateTo(e.target.value)}
-      className="
-        border border-[#708993] 
-        text-[#19183B] 
-        px-3 py-2 
-        rounded-lg 
-        bg-[#E7F2EF] 
-        text-sm 
-        font-medium
-        focus:border-[#19183B] 
-        focus:ring-1 focus:ring-[#19183B] 
-        transition-colors
-        cursor-pointer
-      "
+      className="border border-[#708993] text-[#19183B] px-3 py-2 rounded-lg bg-[#E7F2EF] text-sm 
+        font-medium focus:border-[#19183B]  focus:ring-1 focus:ring-[#19183B]  transition-colors cursor-pointer"
       aria-label="Filter to date"
     />
   </div>
