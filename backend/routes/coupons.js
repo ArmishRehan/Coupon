@@ -14,9 +14,7 @@ function formatDate(dateString) {
   return date.toISOString().slice(0, 19).replace("T", " "); 
 }
 
-
-//helper function
-
+//helper function for expire
 async function expireOldCoupons() {
   const today = new Date();
   const todayStr = today.toISOString().slice(0, 19).replace("T", " ");
@@ -35,7 +33,6 @@ async function expireOldCoupons() {
 }
 
 // Create a new coupon (by Creator, linked to Store User request)
-
 router.post("/", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "creator") {
@@ -43,8 +40,7 @@ router.post("/", authenticate, async (req, res) => {
     }
 
     const {
-      name,
-      discount,
+      name,discount,
       brandId,
       branchId,
       validFrom,
@@ -55,16 +51,7 @@ router.post("/", authenticate, async (req, res) => {
 
     const creatorId = req.user.id;
 
-    if (
-      !name ||
-      !discount ||
-      !brandId ||
-      !branchId ||
-      !validFrom ||
-      !validTo ||
-      !storeUserId ||
-      !requestId
-    ) {
+    if (!name || !discount || !brandId || !branchId || !validFrom || !validTo || !storeUserId || !requestId) {
       return res.status(400).json({ error: "Missing fields" });
     }
 
@@ -97,8 +84,13 @@ router.post("/", authenticate, async (req, res) => {
       ]
     );
 
-    // ✅ DO NOT update coupon_requests here anymore
-    // requests stay 'requested' until admin explicitly approves/rejects them
+   // Mark the request as fulfilled
+await db.query(
+  `UPDATE coupon_requests 
+   SET status = 'fulfilled' 
+   WHERE id = ?`,
+  [requestId]
+);
 
     res.json({
       success: true,
@@ -111,9 +103,7 @@ router.post("/", authenticate, async (req, res) => {
   }
 });
 
-
-
-// Get coupons for logged-in user
+// Store User: My Coupons
 router.get("/my", authenticate, async (req, res) => {
   try {
     const [coupons] = await db.query(
@@ -123,7 +113,7 @@ router.get("/my", authenticate, async (req, res) => {
        JOIN branches br ON c.branch_id = br.id
        JOIN brands b ON br.brand_id = b.id
        WHERE c.store_user_id = ?`,
-      [req.user.id]   // ✅ store user only sees their coupons
+      [req.user.id]
     );
 
     res.json(coupons);
@@ -133,10 +123,7 @@ router.get("/my", authenticate, async (req, res) => {
   }
 });
 
-
-
-//  Redeem coupon (user only)
-
+// Redeem coupon (store user only)
 router.put("/:id/redeem", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "store user") {
@@ -155,6 +142,7 @@ router.put("/:id/redeem", authenticate, async (req, res) => {
     }
 
     await db.query("UPDATE coupons SET status = 'used' WHERE id = ?", [req.params.id]);
+    await db.query("UPDATE coupon_requests SET status = 'used' WHERE id = ?", [coupon[0].request_id]);
 
     res.json({ success: true, msg: "Coupon redeemed successfully!" });
   } catch (err) {
@@ -163,8 +151,7 @@ router.put("/:id/redeem", authenticate, async (req, res) => {
   }
 });
 
-// Update coupon (Admin only, Save Changes button)
-
+// Admin update coupon
 router.put("/:id", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -172,7 +159,6 @@ router.put("/:id", authenticate, async (req, res) => {
     }
 
     const { name, discount, validFrom, validTo, status } = req.body;
-
     let fields = [];
     let values = [];
 
@@ -187,8 +173,16 @@ router.put("/:id", authenticate, async (req, res) => {
     }
 
     values.push(req.params.id);
-
     await db.query(`UPDATE coupons SET ${fields.join(", ")} WHERE id = ?`, values);
+
+    if (status) {
+      await db.query(
+        `UPDATE coupon_requests 
+         SET status = ? 
+         WHERE id = (SELECT request_id FROM coupons WHERE id = ?)`,
+        [status, req.params.id]
+      );
+    }
 
     res.json({ success: true, msg: "Coupon updated" });
   } catch (err) {
@@ -198,44 +192,7 @@ router.put("/:id", authenticate, async (req, res) => {
 });
 
 
-
-// set active after approval
-// Creator sets coupon active (only if admin has approved)
-router.put("/:id/activate", authenticate, async (req, res) => {
-  try {
-    if (req.user.role !== "creator") {
-      return res.status(403).json({ msg: "Only creators can activate coupons" });
-    }
-
-    const { id } = req.params;
-
-    // Check if coupon belongs to this creator and is approved
-    const [coupon] = await db.query(
-      `SELECT * FROM coupons WHERE id = ? AND creator_id = ? AND status = 'approved'`,
-      [id, req.user.id]
-    );
-
-    if (coupon.length === 0) {
-      return res.status(400).json({ msg: "Coupon not found or not approved yet" });
-    }
-
-    await db.query(
-      `UPDATE coupons SET status = 'active' WHERE id = ?`,
-      [id]
-    );
-
-    res.json({ msg: "Coupon set to active" });
-  } catch (err) {
-    console.error("Error activating coupon:", err);
-    res.status(500).json({ msg: "Server error" });
-  }
-});
-
-
-
-
-//  Update only status (optional, not used in EditCoupon anymore)
-
+// ✅ Admin: Update only status
 router.put("/:id/status", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -248,7 +205,6 @@ router.put("/:id/status", authenticate, async (req, res) => {
     }
 
     await db.query("UPDATE coupons SET status = ? WHERE id = ?", [status, req.params.id]);
-
     res.json({ success: true, msg: `Coupon marked as ${status}` });
   } catch (err) {
     console.error("Update error:", err);
@@ -256,12 +212,10 @@ router.put("/:id/status", authenticate, async (req, res) => {
   }
 });
 
-
-
-// Submit coupon request (Store User)
+// ✅ Store User: submit coupon request
 router.post("/request", authenticate, async (req, res) => {
   try {
-    const storeUserId = req.user.id; // logged in store user
+    const storeUserId = req.user.id;
     const { name } = req.body;
 
     if (!name) {
@@ -280,26 +234,25 @@ router.post("/request", authenticate, async (req, res) => {
   }
 });
 
-// Creator fetches all coupon requests
+// ✅ Creator: only unfulfilled requests
 router.get("/request/creator", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "creator") {
       return res.status(403).json({ msg: "Only creators can view requests" });
     }
-// Show only pending requests
-const [requests] = await db.query(
-  "SELECT * FROM coupon_requests WHERE status = 'requested'"
-);
-res.json(requests);
 
+    const [requests] = await db.query(
+      "SELECT * FROM coupon_requests WHERE status = 'requested'"
+    );
+
+    res.json(requests);
   } catch (err) {
     console.error("Error fetching requests:", err);
     res.status(500).json({ error: "Failed to fetch requests" });
   }
 });
 
-
-// Get all coupon requests (Admin only)
+// ✅ Admin: get all coupon requests
 router.get("/request/admin", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -308,7 +261,7 @@ router.get("/request/admin", authenticate, async (req, res) => {
 
     const [rows] = await db.query(
       `SELECT cr.id, cr.name, cr.status, cr.created_at,
-              cr.store_user_id,        -- ✅ include numeric store_user_id
+              cr.store_user_id,
               u.username AS storeUser
        FROM coupon_requests cr
        JOIN users u ON cr.store_user_id = u.id
@@ -322,20 +275,21 @@ router.get("/request/admin", authenticate, async (req, res) => {
   }
 });
 
-// all coupons for admin
-
+// ✅ Admin: all coupons
 router.get("/all", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
       return res.status(403).json({ msg: "Access denied" });
     }
 
-    await expireOldCoupons(); 
+    await expireOldCoupons();
 
     const [rows] = await db.query(
       `SELECT c.id, c.name, c.discount, c.valid_from, c.valid_to, c.qr_code, c.status,
               b.name AS brandName, br.name AS branchName,
-              u.username, u.email
+              su.username AS storeUser,   -- ✅ who requested
+              u.username AS creator,      -- ✅ who created
+              u.email AS creatorEmail
        FROM coupons c
        JOIN branches br ON c.branch_id = br.id
        JOIN brands b ON br.brand_id = b.id
@@ -350,23 +304,24 @@ router.get("/all", authenticate, async (req, res) => {
   }
 });
 
-
-// Get all coupons created by this creator
+// ✅ Creator: all coupons created by them
 router.get("/creator", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "creator") {
       return res.status(403).json({ msg: "Only creators can view their coupons" });
     }
 
-    await expireOldCoupons(); // ✅ auto-expire before fetching
+    await expireOldCoupons();
 
     const [rows] = await db.query(
       `SELECT c.id, c.name, c.discount, c.valid_from, c.valid_to, c.qr_code, c.status,
-              b.name AS brandName, br.name AS branchName
+              b.name AS brandName, br.name AS branchName,
+              su.username AS storeUser
        FROM coupons c
        JOIN branches br ON c.branch_id = br.id
        JOIN brands b ON br.brand_id = b.id
-       WHERE c.creator_id = ? 
+       JOIN users su ON c.store_user_id = su.id
+       WHERE c.creator_id = ?
        ORDER BY c.created_at DESC`,
       [req.user.id]
     );
@@ -377,9 +332,5 @@ router.get("/creator", authenticate, async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 });
-
-
-
-
 
 module.exports = router;

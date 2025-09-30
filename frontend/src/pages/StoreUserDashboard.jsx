@@ -7,6 +7,7 @@ export default function StoreUserDashboard() {
   const [user, setUser] = useState(null);
   const [name, setName] = useState("");
   const [coupons, setCoupons] = useState([]);
+  const [filter, setFilter] = useState("active");
 
   // Check login role
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function StoreUserDashboard() {
     }
   }, [navigate]);
 
-  // Fetch only active coupons for this store user
+  // Fetch coupons for this store user
   const fetchCoupons = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -29,9 +30,7 @@ export default function StoreUserDashboard() {
 
       if (!res.ok) throw new Error("Failed to fetch coupons");
       const data = await res.json();
-
-      // ✅ Only keep active ones
-      setCoupons(data.filter((c) => c.status === "active"));
+      setCoupons(data); // ✅ fetch all statuses
     } catch (err) {
       console.error("Error fetching coupons:", err);
     }
@@ -46,7 +45,8 @@ export default function StoreUserDashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` },
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ name }),
       });
 
@@ -87,6 +87,10 @@ export default function StoreUserDashboard() {
   // Check if coupon expired
   const isExpired = (validTo) => new Date(validTo) < new Date();
 
+  // ✅ Apply filter
+  const filteredCoupons =
+    filter === "all" ? coupons : coupons.filter((c) => c.status === filter);
+
   return (
     <div className="min-h-screen bg-[#E7F2EF] flex flex-col">
       <Navbar />
@@ -115,22 +119,42 @@ export default function StoreUserDashboard() {
           </form>
         </div>
 
-        {/* Active Coupons */}
-        <h2 className="text-2xl font-bold text-[#19183B] mb-6">My Active Coupons</h2>
-        {coupons.length === 0 ? (
-          <p className="text-center text-[#708993]">No active coupons available.</p>
+        {/* Coupons Section with Filter */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-[#19183B]">My Coupons</h2>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="px-3 py-2 border rounded-lg bg-white text-[#19183B]"
+          >
+            <option value="active">Active</option>
+            <option value="used">Used</option>
+            <option value="disabled">Disabled</option>
+            <option value="all">All</option>
+            <option value="expired">Expired</option>
+          </select>
+        </div>
+
+        {filteredCoupons.length === 0 ? (
+          <p className="text-center text-[#708993]">
+            No coupons available for this filter.
+          </p>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {coupons.map((c) => (
+            {filteredCoupons.map((c) => (
               <li
                 key={c.id}
                 className="p-6 bg-white rounded-xl shadow-md border border-[#708993]/30"
               >
-                <h3 className="text-lg font-semibold text-[#19183B] mb-2">{c.name}</h3>
+                <h3 className="text-lg font-semibold text-[#19183B] mb-2">
+                  {c.name}
+                </h3>
                 <p className="text-sm text-[#708993] mb-1">
                   Brand: {c.brandName} | Branch: {c.branchName}
                 </p>
-                <p className="text-sm text-[#708993] mb-1">Discount: {c.discount}%</p>
+                <p className="text-sm text-[#708993] mb-1">
+                  Discount: {c.discount}%
+                </p>
                 <p className="text-sm text-[#708993] mb-1">
                   Valid: {new Date(c.valid_from).toLocaleDateString()} →{" "}
                   {new Date(c.valid_to).toLocaleDateString()}
@@ -144,7 +168,9 @@ export default function StoreUserDashboard() {
                         ? "text-red-600"
                         : c.status === "active"
                         ? "text-blue-600"
-                        : "text-gray-600"
+                        : c.status === "used"
+                        ? "text-gray-600"
+                        : "text-gray-500"
                     }`}
                   >
                     {isExpired(c.valid_to) ? "expired" : c.status}

@@ -6,6 +6,7 @@ export default function CreatorDashboard() {
   const [requests, setRequests] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
 
   const fetchRequests = async () => {
     const token = localStorage.getItem("token");
@@ -14,7 +15,6 @@ export default function CreatorDashboard() {
     });
     if (res.ok) {
       const data = await res.json();
-      // ❌ Only show pending requests
       setRequests(data.filter((r) => r.status === "requested"));
     }
   };
@@ -31,29 +31,6 @@ export default function CreatorDashboard() {
     setLoading(false);
   };
 
-const setActive = async (id) => {
-  try {
-    const token = localStorage.getItem("token");
-    const res = await fetch(`http://localhost:5000/api/coupons/${id}/activate`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.msg || "Failed to activate coupon");
-    }
-
-    alert("Coupon is now Active!");
-    fetchCoupons();
-  } catch (err) {
-    console.error("Error activating coupon:", err);
-    alert(err.message);
-  }
-};
-
 
   useEffect(() => {
     fetchRequests();
@@ -61,6 +38,10 @@ const setActive = async (id) => {
   }, []);
 
   if (loading) return <p className="text-center mt-6">Loading dashboard...</p>;
+
+  // status filter
+  const filteredCoupons =
+    filter === "all" ? coupons : coupons.filter((c) => c.status === filter);
 
   return (
     <div className="min-h-screen bg-[#E7F2EF] flex flex-col">
@@ -78,11 +59,18 @@ const setActive = async (id) => {
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
             {requests.map((r) => (
-              <li key={r.id} className="p-6 bg-white rounded-xl border border-[#708993]/30 shadow-sm">
+              <li
+                key={r.id}
+                className="p-6 bg-white rounded-xl border border-[#708993]/30 shadow-sm"
+              >
                 <h3 className="text-xl font-semibold text-[#19183B] mb-2">{r.name}</h3>
-                <p className="text-sm text-[#708993] mb-1">Requested by: {r.storeUser}</p>
+                <p className="text-sm text-[#708993] mb-1">
+                  Requested by: {r.name}
+                </p>
                 <p className="text-sm text-[#708993] mb-1">Status: {r.status}</p>
-                <p className="text-xs text-[#708993] mb-3">{new Date(r.created_at).toLocaleDateString()}</p>
+                <p className="text-xs text-[#708993] mb-3">
+                  {new Date(r.created_at).toLocaleDateString()}
+                </p>
                 <CreateCouponButton storeUserId={r.store_user_id} requestId={r.id} />
               </li>
             ))}
@@ -90,25 +78,49 @@ const setActive = async (id) => {
         )}
 
         {/* My Coupons */}
-        <h2 className="text-3xl font-light mb-6 text-[#19183B]">
-          <span className="font-semibold">My</span> Coupons
-        </h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-3xl font-light text-[#19183B]">
+            <span className="font-semibold">My</span> Coupons
+          </h2>
 
-        {coupons.length === 0 ? (
+          {/* Filter dropdown */}
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="px-3 py-2 border rounded-lg bg-white text-[#19183B]"
+          >
+            <option value="all">All</option>
+            <option value="waiting_for_approval">Waiting for Approval</option>
+            <option value="active">Active</option>
+            <option value="disabled">Disabled</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+
+        {filteredCoupons.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 border border-dashed border-[#708993] rounded-xl">
-            <p className="text-center text-[#708993] text-lg">No coupons created yet.</p>
+            <p className="text-center text-[#708993] text-lg">
+              No coupons match this filter.
+            </p>
           </div>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {coupons.map((c) => (
-              <li key={c.id} className="p-6 bg-white rounded-xl border border-[#708993]/30 shadow-sm">
+            {filteredCoupons.map((c) => (
+              <li
+                key={c.id}
+                className="p-6 bg-white rounded-xl border border-[#708993]/30 shadow-sm"
+              >
                 <h3 className="text-xl font-semibold text-[#19183B] mb-2">{c.name}</h3>
                 <p className="text-sm text-[#708993] mb-1">
                   Brand: {c.brandName} | Branch: {c.branchName}
                 </p>
-                <p className="text-sm text-[#708993] mb-1">Discount: {c.discount}%</p>
+                <p className="text-sm text-[#708993] mb-1">
+                  Discount: {c.discount}%
+                </p>
                 <p className="text-sm text-[#708993] mb-1">Status: {c.status}</p>
-
+                <p className="text-sm text-[#708993] mb-1">
+                  Requested by: {c.storeUser || "N/A"}
+                </p>
                 {/* ✅ Show QR when active */}
                 {c.status === "active" && c.qr_code && (
                   <img
@@ -117,21 +129,11 @@ const setActive = async (id) => {
                     className="mt-2 w-20 h-20"
                   />
                 )}
-
-                {/* ✅ Creator can set approved coupon → active */}
-                {c.status === "approved" && (
-                  <button
-                    onClick={() => setActive(c.id)}
-                    className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  >
-                    Set Active
-                  </button>
-                )}
-
                 <p className="text-xs text-[#708993]">
                   {new Date(c.valid_from).toLocaleDateString()} -{" "}
                   {new Date(c.valid_to).toLocaleDateString()}
                 </p>
+           
               </li>
             ))}
           </ul>

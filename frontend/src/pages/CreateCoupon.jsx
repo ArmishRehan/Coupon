@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 export default function CreateCoupon() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { storeUserId, requestId } = location.state || {}; // ✅ passed from CreatorDashboard
+  const { storeUserId, requestId } = location.state || {}; 
 
   const [brands, setBrands] = useState([]);
   const [branches, setBranches] = useState([]);
@@ -62,7 +62,7 @@ export default function CreateCoupon() {
           ...form,
           storeUserId,
           requestId,
-          status: "waiting_for_approval", // ✅ ensure db status
+          status: "waiting_for_approval", 
         }),
       });
 
