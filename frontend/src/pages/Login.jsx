@@ -28,12 +28,17 @@ export default function Login() {
 
         if (data.user.role === "admin") {
           navigate("/Admin-Dashboard");
-        } else {
-          navigate("/User-Dashboard");
+        } 
+        else if (data.user.role === "creator") {
+          navigate("/Creator-Dashboard");
         }
-      } else {
+        else if (data.user.role === "store user"){
+          navigate("/StoreUser-Dashboard");
+        }
+       else {
         alert(data.msg || "Login failed");
       }
+    }
     } catch (err) {
       console.error("Login error:", err);
       alert("Server error");

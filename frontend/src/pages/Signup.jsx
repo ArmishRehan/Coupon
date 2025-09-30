@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
-  const [form, setForm] = useState({ username: "", email: "", password: "", role: "user" });
+  const [form, setForm] = useState({ username: "", email: "", password: "", role: "store user" });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -112,8 +112,9 @@ return (
             className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
               focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
           >
-            <option value="user">User</option>
+            <option value="store user">Store User</option>
             <option value="admin">Admin</option>
+            <option value="creator">Creator</option>
           </select>
         </div>
 
