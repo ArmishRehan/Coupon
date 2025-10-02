@@ -4,6 +4,7 @@ const QRCode = require("qrcode");
 const path = require("path");
 const fs = require("fs");
 const authenticate = require("../middleware/auth");
+const { log } = require("console");
 
 const router = express.Router();
 
@@ -34,6 +35,7 @@ async function expireOldCoupons() {
 
 // Create a new coupon (by Creator, linked to Store User request)
 router.post("/", authenticate, async (req, res) => {
+  
   try {
     if (req.user.role !== "creator") {
       return res.status(403).json({ msg: "Only creators can create coupons" });
@@ -112,6 +114,7 @@ router.get("/my", authenticate, async (req, res) => {
        FROM coupons c
        JOIN branches br ON c.branch_id = br.id
        JOIN brands b ON br.brand_id = b.id
+       
        WHERE c.store_user_id = ?`,
       [req.user.id]
     );
@@ -192,7 +195,7 @@ router.put("/:id", authenticate, async (req, res) => {
 });
 
 
-// ✅ Admin: Update only status
+//  Admin: Update only status
 router.put("/:id/status", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -212,7 +215,7 @@ router.put("/:id/status", authenticate, async (req, res) => {
   }
 });
 
-// ✅ Store User: submit coupon request
+//  Store User: submit coupon request
 router.post("/request", authenticate, async (req, res) => {
   try {
     const storeUserId = req.user.id;
@@ -234,16 +237,25 @@ router.post("/request", authenticate, async (req, res) => {
   }
 });
 
-// ✅ Creator: only unfulfilled requests
+//  Creator: only unfulfilled requests
 router.get("/request/creator", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "creator") {
       return res.status(403).json({ msg: "Only creators can view requests" });
     }
 
-    const [requests] = await db.query(
-      "SELECT * FROM coupon_requests WHERE status = 'requested'"
-    );
+const [requests] = await db.query(
+  `SELECT 
+    cr.id AS request_id,           -- request identifier
+    cr.name,
+    cr.status,
+    cr.created_at,
+    cr.store_user_id,              -- keep store user id too
+    u.username AS store_username
+  FROM coupon_requests cr
+  JOIN users u ON cr.store_user_id = u.id
+  WHERE cr.status = 'requested'`
+);
 
     res.json(requests);
   } catch (err) {
@@ -252,7 +264,7 @@ router.get("/request/creator", authenticate, async (req, res) => {
   }
 });
 
-// ✅ Admin: get all coupon requests
+//  Admin: get all coupon requests
 router.get("/request/admin", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -275,7 +287,7 @@ router.get("/request/admin", authenticate, async (req, res) => {
   }
 });
 
-// ✅ Admin: all coupons
+// Admin: all coupons
 router.get("/all", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -287,8 +299,8 @@ router.get("/all", authenticate, async (req, res) => {
     const [rows] = await db.query(
       `SELECT c.id, c.name, c.discount, c.valid_from, c.valid_to, c.qr_code, c.status,
               b.name AS brandName, br.name AS branchName,
-              su.username AS storeUser,   -- ✅ who requested
-              u.username AS creator,      -- ✅ who created
+              su.username AS storeUser,  
+              u.username AS creator,      
               u.email AS creatorEmail
        FROM coupons c
        JOIN branches br ON c.branch_id = br.id
@@ -304,7 +316,7 @@ router.get("/all", authenticate, async (req, res) => {
   }
 });
 
-// ✅ Creator: all coupons created by them
+//  Creator: all coupons created by them
 router.get("/creator", authenticate, async (req, res) => {
   try {
     if (req.user.role !== "creator") {

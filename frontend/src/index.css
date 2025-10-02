@@ -3,3 +3,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@theme {
+      --color-primary: #1C352D;
+      --color-secondary: #A6B28B;
+      --color-contrast: #F5C9B0;
+      --color-base: #F9F6F3; 
+      --color-dark: #000000;
+    }
+
+@layer components {
+  .btn {
+    @apply px-4 py-1.5 rounded-lg text-sm font-semibold bg-primary text-base border border-transparent  
+      shadow-sm transition-all duration-300 hover:bg-primary hover:text-base;
+  }
+}

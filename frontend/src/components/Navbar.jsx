@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import CreateCouponButton from "./CreateCouponButton";
 import LogoutButton from "./LogoutButton";
+import { Tickets } from "lucide-react";
 
 export default function Navbar() {
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -27,20 +26,29 @@ export default function Navbar() {
   }, [navigate]);
 
 
-return (
-  <nav 
-    className="flex items-center justify-between px-8 py-4 bg-[#E7F2EF] border-[#708993] shadow-lg"
-  >
+  return (
+    <nav className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-secondary shadow-sm shadow-secondary sticky top-0 z-50">
 
-    <h3 className="text-xl font-light text-[#19183B]">
-      Welcome, <span className="font-semibold text-[#A1C2BD]">{username}</span>
-      <span className="text-[#19183B]">!</span>
-    </h3>
+      <div className="flex items-center gap-2 sm:gap-4">
 
-    <div className="flex items-center space-x-4">
-      <LogoutButton />
-    </div>
-  </nav>
-);
+        < Tickets color="#1C352D" />
+        <h3 className="text-lg sm:text-xl font-bold whitespace-nowrap">
+          <span className="text-primary">CouponMaster</span>
+        </h3>
+
+        <h2 className="text-md sm:text-md mt-1 flex items-center">
+          <span className="text-[#1C352D] font-medium truncate max-w-[80px] sm:max-w-full hidden md:block">
+            {username}
+          </span>
+        </h2>
+      </div>
+
+      <div>
+        <LogoutButton />
+      </div>
+    </nav>
+  );
+
+
 
 }

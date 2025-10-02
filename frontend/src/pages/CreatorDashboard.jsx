@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import CreateCouponButton from "../components/CreateCouponButton";
@@ -43,6 +44,19 @@ export default function CreatorDashboard() {
   const filteredCoupons =
     filter === "all" ? coupons : coupons.filter((c) => c.status === filter);
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "waiting_for_approval": return "text-yellow-600";
+      case "active": return "text-green-600";
+      case "disabled": return "text-gray-500";
+      case "used": return "text-gray-500";
+      case "expired": return "text-gray-600";
+      case "rejected": return "text-red-600";
+      default: return "text- #708993";
+    }
+  };
+
+
   return (
     <div className="min-h-screen bg-[#E7F2EF] flex flex-col">
       <Navbar />
@@ -65,13 +79,14 @@ export default function CreatorDashboard() {
               >
                 <h3 className="text-xl font-semibold text-[#19183B] mb-2">{r.name}</h3>
                 <p className="text-sm text-[#708993] mb-1">
-                  Requested by: {r.name}
+                  Requested by: {r.store_username}
                 </p>
                 <p className="text-sm text-[#708993] mb-1">Status: {r.status}</p>
                 <p className="text-xs text-[#708993] mb-3">
                   {new Date(r.created_at).toLocaleDateString()}
                 </p>
-                <CreateCouponButton storeUserId={r.store_user_id} requestId={r.id} />
+                <CreateCouponButton storeUserId={r.store_user_id}
+                  requestId={r.request_id} />
               </li>
             ))}
           </ul>
@@ -117,7 +132,10 @@ export default function CreatorDashboard() {
                 <p className="text-sm text-[#708993] mb-1">
                   Discount: {c.discount}%
                 </p>
-                <p className="text-sm text-[#708993] mb-1">Status: {c.status}</p>
+                <p className="text-sm text-[#708993] mb-1">
+                  Status:{" "}
+                  <span className={getStatusColor(c.status)}>{c.status}</span>
+                </p>
                 <p className="text-sm text-[#708993] mb-1">
                   Requested by: {c.storeUser || "N/A"}
                 </p>
@@ -133,7 +151,7 @@ export default function CreatorDashboard() {
                   {new Date(c.valid_from).toLocaleDateString()} -{" "}
                   {new Date(c.valid_to).toLocaleDateString()}
                 </p>
-           
+
               </li>
             ))}
           </ul>

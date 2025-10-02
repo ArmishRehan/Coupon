@@ -1,3 +1,4 @@
+
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -87,7 +88,7 @@ export default function StoreUserDashboard() {
   // Check if coupon expired
   const isExpired = (validTo) => new Date(validTo) < new Date();
 
-  // ✅ Apply filter
+  // Apply filter
   const filteredCoupons =
     filter === "all" ? coupons : coupons.filter((c) => c.status === filter);
 
