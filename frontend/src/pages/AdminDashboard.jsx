@@ -262,7 +262,8 @@ export default function AdminDashboard() {
                   setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="Coupon Name"
-                className="w-full border p-2 rounded-lg"
+                className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 focus:ring-contrast focus:outline-none transition"
               />
               <input
                 type="number"
@@ -271,7 +272,8 @@ export default function AdminDashboard() {
                   setFormData({ ...formData, discount: e.target.value })
                 }
                 placeholder="Discount %"
-                className="w-full border p-2 rounded-lg"
+                className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 focus:ring-contrast focus:outline-none transition"
               />
               <div className="flex gap-3">
                 <input
@@ -283,7 +285,8 @@ export default function AdminDashboard() {
                       valid_from: e.target.value,
                     })
                   }
-                  className="w-full border p-2 rounded-lg"
+                  className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 focus:ring-contrast focus:outline-none transition"
                 />
                 <input
                   type="date"
@@ -294,7 +297,8 @@ export default function AdminDashboard() {
                       valid_to: e.target.value,
                     })
                   }
-                  className="w-full border p-2 rounded-lg"
+                  className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 focus:ring-contrast focus:outline-none transition"
                 />
               </div>
 
@@ -314,7 +318,7 @@ export default function AdminDashboard() {
                     await handleUpdate(selectedCoupon.id, selectedCoupon.status); // Save only
                     setEditingCoupon(null);
                   }}
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90 shadow-sm"
+                  className="btn"
                 >
                   Save Changes
                 </button>
