@@ -264,6 +264,27 @@ const [requests] = await db.query(
   }
 });
 
+// Get requested coupons for logged-in store user
+router.get("/requests/my", authenticate, async (req, res) => {
+  try {
+    const storeUserId = req.user.id;
+
+    const [rows] = await db.query(
+      `SELECT id, name, status, created_at 
+       FROM coupon_requests 
+       WHERE store_user_id = ? 
+       ORDER BY created_at DESC`,
+      [storeUserId]
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching requested coupons:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+
 //  Admin: get all coupon requests
 router.get("/request/admin", authenticate, async (req, res) => {
   try {

@@ -9,6 +9,16 @@
       --color-contrast: #F5C9B0;
       --color-base: #F9F6F3; 
       --color-dark: #000000;
+      --color-light: #708993;
+
+      
+      --color-waiting: #FACC15;
+      --color-expired: #FB923C;
+      --color-used: #3B82F6;
+      --color-active: #22C55E;
+      --color-disabled: #9CA3AF ;
+      --color-rejected: #EF4444;
+      
     }
 
 @layer components {
