@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 
 export default function CreateCoupon() {
@@ -62,7 +63,7 @@ export default function CreateCoupon() {
           ...form,
           storeUserId,
           requestId,
-          status: "waiting_for_approval", 
+          status: "waiting_for_approval",
         }),
       });
 
@@ -80,28 +81,45 @@ export default function CreateCoupon() {
   };
 
   return (
-    <div className="min-h-screen bg-[#E7F2EF] flex flex-col">
+    <div className="min-h-screen bg-base flex flex-col">
       <Navbar />
-      <div className="flex-grow flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-4xl p-8 bg-white shadow-xl rounded-2xl h-auto border border-[#708993]/30">
-          <h2 className="text-2xl font-bold mb-6 text-[#19183B] text-center">
-            Create Coupon
+
+      <motion.div
+        className="flex-grow flex items-center justify-center px-4 py-10"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <motion.div
+          className="w-full max-w-4xl p-10 bg-base backdrop-blur-sm border border-secondary/60
+                     shadow-xl rounded-2xl h-auto"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <h2 className="text-3xl font-light mb-8 text-center text-primary">
+            <span className="font-semibold">Create</span> Coupon
           </h2>
 
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 lg:grid-cols-2 gap-6"
           >
-            <div>
-              <label className="block text-sm font-medium text-[#708993] mb-1">
+            {/* Brand */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <label className="block text-sm font-medium text-primary mb-1">
                 Brand
               </label>
               <select
                 name="brandId"
                 value={form.brandId}
                 onChange={handleChange}
-                className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
-                          focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
+                className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 focus:ring-contrast focus:outline-none transition"
                 required
               >
                 <option value="" disabled>
@@ -113,18 +131,23 @@ export default function CreateCoupon() {
                   </option>
                 ))}
               </select>
-            </div>
+            </motion.div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#708993] mb-1">
+            {/* Branch */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <label className="block text-sm font-medium text-primary mb-1">
                 Branch
               </label>
               <select
                 name="branchId"
                 value={form.branchId}
                 onChange={handleChange}
-                className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
-                          focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
+                className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 focus:ring-contrast focus:outline-none transition"
                 required
                 disabled={!form.brandId}
               >
@@ -137,10 +160,15 @@ export default function CreateCoupon() {
                   </option>
                 ))}
               </select>
-            </div>
+            </motion.div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#708993] mb-1">
+            {/* Coupon Name */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <label className="block text-sm font-medium text-primary mb-1">
                 Coupon Name
               </label>
               <input
@@ -148,14 +176,18 @@ export default function CreateCoupon() {
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
-                          focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
-                required
+               className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-contrast focus:outline-none transition"
               />
-            </div>
+            </motion.div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#708993] mb-1">
+            {/* Discount */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              <label className="block text-sm font-medium text-primary mb-1">
                 Discount (%)
               </label>
               <input
@@ -163,14 +195,19 @@ export default function CreateCoupon() {
                 name="discount"
                 value={form.discount}
                 onChange={handleChange}
-                className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
-                          focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
+              className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-contrast focus:outline-none transition"
                 required
               />
-            </div>
+            </motion.div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#708993] mb-1">
+            {/* Valid From */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <label className="block text-sm font-medium text-primary mb-1">
                 Valid From
               </label>
               <input
@@ -178,14 +215,19 @@ export default function CreateCoupon() {
                 name="validFrom"
                 value={form.validFrom}
                 onChange={handleChange}
-                className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
-                          focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
+                className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 focus:ring-contrast focus:outline-none transition"
                 required
               />
-            </div>
+            </motion.div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#708993] mb-1">
+            {/* Valid To */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+            >
+              <label className="block text-sm font-medium text-primary mb-1">
                 Valid To
               </label>
               <input
@@ -193,26 +235,31 @@ export default function CreateCoupon() {
                 name="validTo"
                 value={form.validTo}
                 onChange={handleChange}
-                className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
-                          focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
+                className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 focus:ring-contrast focus:outline-none transition"
                 required
               />
-            </div>
+            </motion.div>
 
-            <div className="lg:col-span-2">
+            {/* Submit Button */}
+            <motion.div
+              className="lg:col-span-2"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="flex justify-center">
               <button
                 type="submit"
-                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl 
-                           shadow-md text-lg font-semibold text-[#19183B] bg-[#A1C2BD] 
-                           hover:bg-[#708993] hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 
-                           focus:ring-[#A1C2BD] transition duration-150 ease-in-out"
+                className="btn "
               >
                 Create Coupon
               </button>
-            </div>
+              </div>
+            </motion.div>
           </form>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

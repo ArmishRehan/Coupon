@@ -150,7 +150,7 @@ export default function StoreUserDashboard() {
               />
               <button
                 type="submit"
-                className="px-6 py-2 bg-primary text-white rounded-xl font-medium hover:bg-secondary hover:text-dark transition"
+                className="btn"
               >
                 Submit Request
               </button>

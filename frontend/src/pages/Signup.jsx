@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Signup() {
-  const [form, setForm] = useState({ username: "", email: "", password: "", role: "store user" });
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+    role: "store user",
+  });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -32,113 +38,141 @@ export default function Signup() {
     }
   };
 
-return (
-  <div className="flex items-center justify-center min-h-screen bg-[#E7F2EF]">
-    <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl border border-[#708993]/30">
-      <h2 className="text-3xl font-bold text-center text-[#19183B]">
-        Create an Account
-      </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label
-            htmlFor="username"
-            className="block text-sm font-medium text-[#708993]"
-          >
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            value={form.username}
-            onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
-                    focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] placeholder-[#708993] transition"
-            placeholder="Enter your username"
-            required
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-[#708993]"
-          >
-            Email address
-          </label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            value={form.email}
-            onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
-                    focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] placeholder-[#708993] transition"
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-[#708993]"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            value={form.password}
-            onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
-                    focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] placeholder-[#708993] transition"
-            placeholder="Create a strong password"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium text-[#708993]">
-            Role
-          </label>
-          <select
-            name="role"
-            id="role"
-            value={form.role}
-            onChange={handleChange}
-            className="mt-1 block w-full px-4 py-2 rounded-xl border border-[#708993]/50 shadow-sm 
-              focus:ring-[#A1C2BD] focus:border-[#A1C2BD] bg-white text-[#19183B] transition"
-          >
-            <option value="store user">Store User</option>
-            <option value="admin">Admin</option>
-            <option value="creator">Creator</option>
-          </select>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-xl 
-                     shadow-md text-lg font-semibold text-[#19183B] bg-[#A1C2BD] 
-                     hover:bg-[#708993] hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 
-                     focus:ring-[#A1C2BD] transition duration-150 ease-in-out"
+  return (
+    <div className="min-h-screen bg-base flex flex-col">
+      <motion.div
+        className="flex-grow flex items-center justify-center px-4 py-10"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <motion.div
+          className="w-full max-w-lg p-10 bg-base backdrop-blur-sm border border-secondary/60
+                     shadow-xl rounded-2xl"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
-          Sign up
-        </button>
-      </form>
+          <h2 className="text-3xl font-light mb-8 text-center text-primary">
+            <span className="font-semibold">Create</span> Account
+          </h2>
 
-      <p className="mt-4 text-sm text-center text-[#708993]">
-        Already have an account?{" "}
-        <span
-          className="font-medium text-[#19183B] hover:text-[#A1C2BD] cursor-pointer transition-colors"
-          onClick={() => navigate("/login")}
-        >
-          Log in
-        </span>
-      </p>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Username */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <label className="block text-sm font-medium text-primary mb-1">
+                Username
+              </label>
+              <input
+                type="text"
+                name="username"
+                value={form.username}
+                onChange={handleChange}
+                className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 
+                 focus:ring-contrast focus:outline-none transition"
+                placeholder="Enter your username"
+                required
+              />
+            </motion.div>
+
+            {/* Email */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <label className="block text-sm font-medium text-primary mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 
+                 focus:ring-contrast focus:outline-none transition"
+                placeholder="Enter your email"
+                required
+              />
+            </motion.div>
+
+            {/* Password */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <label className="block text-sm font-medium text-primary mb-1">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                 rounded-lg text-sm font-semibold text-light focus:ring-2 
+                 focus:ring-contrast focus:outline-none transition"
+                placeholder="Create a strong password"
+                required
+              />
+            </motion.div>
+
+            {/* Role */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              <label className="block text-sm font-medium text-primary mb-1">
+                Role
+              </label>
+              <select
+                name="role"
+                value={form.role}
+                onChange={handleChange}
+                className="mt-1 block w-full px-4 py-2 border border-secondary/50 
+                  rounded-lg text-sm font-semibold text-light focus:ring-2 
+                  focus:ring-contrast focus:outline-none transition"
+              >
+                <option value="store user">Store User</option>
+                <option value="admin">Admin</option>
+                <option value="creator">Creator</option>
+              </select>
+            </motion.div>
+
+            {/* Submit */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <button
+                type="submit"
+                className="btn"
+              >
+                Sign up
+              </button>
+            </motion.div>
+          </form>
+
+          <p className="mt-6 text-sm text-center text-primary">
+            Already have an account?{" "}
+            <span
+              className="font-medium text-primary hover:text-secondary cursor-pointer transition"
+              onClick={() => navigate("/login")}
+            >
+              Log in
+            </span>
+          </p>
+        </motion.div>
+      </motion.div>
     </div>
-  </div>
-);
+  );
 }

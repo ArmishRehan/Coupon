@@ -10,7 +10,7 @@
       --color-base: #F9F6F3; 
       --color-dark: #000000;
       --color-light: #708993;
-
+      --color-primary-hover: #264D41;
       
       --color-waiting: #FACC15;
       --color-expired: #FB923C;
@@ -24,6 +24,6 @@
 @layer components {
   .btn {
     @apply px-4 py-1.5 rounded-lg text-sm font-semibold bg-primary text-base border border-transparent  
-      shadow-sm transition-all duration-300 hover:bg-primary hover:text-base;
+      shadow-sm transition-all duration-300 hover:bg-primary-hover hover:text-base;
   }
 }
